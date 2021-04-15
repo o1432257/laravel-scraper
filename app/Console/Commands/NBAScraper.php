@@ -15,13 +15,14 @@ class NBAScraper extends Command
     protected $results = array();
     private $matchStatus = ['  未開始', '  比賽中', '  比賽結束'];
     private $notice;
+    private $date;
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'NBA:scraper';
+    protected $signature = 'NBA:scraper {date?}';
 
     /**
      * The console command description.
@@ -47,6 +48,7 @@ class NBAScraper extends Command
      */
     public function handle()
     {
+        $this->setDate();
         $this->setUrl();
         $this->getNBA();
         $this->setNotice();
@@ -73,7 +75,7 @@ class NBAScraper extends Command
 
     public function setUrl()
     {
-        $this->url .= Carbon::now()->toDateString();
+        $this->url .= $this->date;
     }
 
     public function getNBA()
@@ -85,19 +87,27 @@ class NBAScraper extends Command
 
         foreach ($data->payload->date->games as $key => $value) {
 
-            $this->results[$key] = $value->homeTeam->profile->name . " VS " . $value->awayTeam->profile->name .
+            $this->results[$key] = $value->awayTeam->profile->name . " VS " . $value->homeTeam->profile->name .
                 " " . $value->boxscore->awayScore . ":" . $value->boxscore->homeScore . $this->matchStatus[$value->boxscore->status - 1];
         }
     }
 
     public function setNotice()
     {
-        $this->notice = Carbon::now()->toDateString() . "\n";
+        $this->notice = $this->date . "\n";
 
         foreach ($this->results as $key => $value) {
             $this->notice .= $value . "\n";
         }
     }
 
+    public function setDate()
+    {
+        if (date('Y-m-d', strtotime($this->argument('date'))) == $this->argument('date')) {
+            $this->date = $this->argument('date');
+        } else {
+            $this->date = Carbon::now()->toDateString();
+        }
+    }
 
 }
