@@ -70,7 +70,6 @@ class NBAScraper extends Command
         $page = $client->request('GET', $this->url);
         $data = json_decode($page->getBody()->getContents());
         foreach ($data->payload->date->games as $key => $value) {
-
             $this->results[$key] = $value->awayTeam->profile->name . " VS " . $value->homeTeam->profile->name .
                 " " . $value->boxscore->awayScore . ":" . $value->boxscore->homeScore . $this->matchStatus[$value->boxscore->status - 1];
         }
