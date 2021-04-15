@@ -69,9 +69,6 @@ class NBAScraper extends Command
 
         $page = $client->request('GET', $this->url);
         $data = json_decode($page->getBody()->getContents());
-        $telegram = new Telegram();
-        $telegram->request = strlen(json_encode($data));
-        $telegram->save;
         foreach ($data->payload->date->games as $key => $value) {
 
             $this->results[$key] = $value->awayTeam->profile->name . " VS " . $value->homeTeam->profile->name .
