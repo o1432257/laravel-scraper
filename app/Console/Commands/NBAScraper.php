@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Telegram;
 use App\Notifications\InvoicePaid;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -57,22 +58,6 @@ class NBAScraper extends Command
             ->notify(new InvoicePaid($this->notice));
     }
 
-    public function scraperNBA()
-    {
-        $url = 'https://tw.global.nba.com/stats2/scores/daily.json?countryCode=TW&locale=zh_TW&tz=%2B8&gameDate=' . Carbon::now()->toDateString();
-        $client = new Client();
-        $page = $client->request('GET', $url);
-        $data = json_decode($page->getBody()->getContents());
-        $text = Carbon::now()->toDateString() . "\n";
-
-        foreach ($data->payload->date->games as $key => $value) {
-            $text = $text . $value->homeTeam->profile->name . " VS " . $value->awayTeam->profile->name .
-                " " . $value->boxscore->awayScore . ":" . $value->boxscore->homeScore . $this->matchStatus[$value->boxscore->status - 1] . "\n";
-        }
-        Notification::route(TelegramChannel::class, '')
-            ->notify(new InvoicePaid($text));
-    }
-
     public function setUrl()
     {
         $this->url .= $this->date;
@@ -84,7 +69,9 @@ class NBAScraper extends Command
 
         $page = $client->request('GET', $this->url);
         $data = json_decode($page->getBody()->getContents());
-
+        $telegram = new Telegram();
+        $telegram->request = strlen(json_encode($data));
+        $telegram->save;
         foreach ($data->payload->date->games as $key => $value) {
 
             $this->results[$key] = $value->awayTeam->profile->name . " VS " . $value->homeTeam->profile->name .

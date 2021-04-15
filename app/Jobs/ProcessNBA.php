@@ -14,14 +14,15 @@ class ProcessNBA implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    private $data;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(string $data = '')
     {
-        //
+        $this->data = $data;
     }
 
     /**

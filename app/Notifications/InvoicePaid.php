@@ -20,7 +20,7 @@ class InvoicePaid extends Notification
      *
      * @return void
      */
-    public function __construct(string $data)
+    public function __construct( $data)
     {
         $this->data = $data;
     }

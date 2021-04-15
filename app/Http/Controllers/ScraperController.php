@@ -4,25 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessCoin;
 use App\Jobs\ProcessNBA;
-use App\Models\Telegram;
-use App\Notifications\InvoicePaid;
-use Carbon\Carbon;
-
-//use Goutte\Client;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Queue\Jobs\Job;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Notification;
-use NotificationChannels\Telegram\TelegramChannel;
 
 class ScraperController extends Controller
 {
+    private $data;
+    private $explodedData = array();
+
     public function telegram(Request $request)
     {
-        $data = $request->all()['message']['text'];
+        if (isset($request->all()['message']['text'])){
 
-        switch ($data)
+            $this->data = $request->all()['message']['text'];
+
+            $this->explodedData = explode(" ",$this->data);
+
+            $this->isExploded();
+        }
+    }
+
+    private function switch()
+    {
+        switch ($this->explodedData[0])
         {
             case '籃球':
                 ProcessNBA::dispatch();
@@ -34,6 +37,32 @@ class ScraperController extends Controller
 
             default:
                 break;
+        }
+    }
+
+    private function switchWithData()
+    {
+        switch ($this->explodedData[0])
+        {
+            case '籃球':
+                ProcessNBA::dispatch($this->explodedData[1]);
+                break;
+
+            case '幣價':
+                ProcessCoin::dispatch();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private function isExploded()
+    {
+        if (isset($this->explodedData[1])){
+            $this->switchWithData();
+        }else{
+            $this->switch();
         }
     }
 }
