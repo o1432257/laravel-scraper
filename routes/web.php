@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CoinController;
 use App\Http\Controllers\ScraperController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,5 +18,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/scraper', [ScraperController::class, 'scraperCoin']);
+
 Route::post('/', [ScraperController::class, 'telegram']);

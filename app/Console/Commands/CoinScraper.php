@@ -9,18 +9,18 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Notification;
 use NotificationChannels\Telegram\TelegramChannel;
 
-class TelegramBot extends Command
+class CoinScraper extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'coin:now';
+    protected $signature = 'coin:scraper';
 
     private $results = array();
     private $coins = ['BTC', 'ETH', 'XRP', 'BNB', 'DOGE', 'TRX', 'ADA', 'TLM', 'CHZ', 'XLM'];
-    private $notiable;
+    private $notice;
 
     /**
      * The console command description.
@@ -48,10 +48,10 @@ class TelegramBot extends Command
     {
         $this->getCoin();
 
-        $this->setNotiable();
+        $this->setNotice();
 
         Notification::route(TelegramChannel::class, '')
-            ->notify(new InvoicePaid($this->notiable));
+            ->notify(new InvoicePaid($this->notice));
     }
 
     private function getCoin()
@@ -65,12 +65,12 @@ class TelegramBot extends Command
         }
     }
 
-    private function setNotiable()
+    private function setNotice()
     {
-        $this->notiable = Carbon::now() . "\n" . "*目前價格* \n";
+        $this->notice = Carbon::now() . "\n" . "*目前價格* \n";
 
         foreach ($this->results as $key => $value) {
-            $this->notiable = $this->notiable . $key . " : " . $value . " USD" . "\n";
+            $this->notice = $this->notice . $key . " : " . $value . " USD" . "\n";
         }
     }
 }
