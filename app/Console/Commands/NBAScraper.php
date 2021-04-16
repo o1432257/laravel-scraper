@@ -63,11 +63,8 @@ class NBAScraper extends Command
 
     private function setUrl()
     {
-        $this->url = $this->demoUrl;
-        $this->watchMoreUrl = $this->demoWatchMOreUrl;
-
-        $this->url .= $this->date;
-        $this->watchMoreUrl .= $this->date;
+        $this->url = $this->demoUrl . $this->date;
+        $this->watchMoreUrl = $this->demoWatchMOreUrl . $this->date;
     }
 
     private function getNBA()
