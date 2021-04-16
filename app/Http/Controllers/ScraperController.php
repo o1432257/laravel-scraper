@@ -20,30 +20,14 @@ class ScraperController extends Controller
             $this->explodedData = explode(" ",$this->data);
 
             $this->isExploded();
+
+            $this->switch();
         }
     }
 
     private function switch()
     {
-        switch ($this->explodedData[0])
-        {
-            case '籃球':
-                ProcessNBA::dispatch();
-                break;
-
-            case '幣價':
-                ProcessCoin::dispatch();
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    private function switchWithData()
-    {
-        switch ($this->explodedData[0])
-        {
+        switch ($this->explodedData[0]) {
             case '籃球':
                 ProcessNBA::dispatch($this->explodedData[1]);
                 break;
@@ -59,10 +43,8 @@ class ScraperController extends Controller
 
     private function isExploded()
     {
-        if (isset($this->explodedData[1])){
-            $this->switchWithData();
-        }else{
-            $this->switch();
+        if (!isset($this->explodedData[1])){
+            $this->explodedData[1] = '';
         }
     }
 }

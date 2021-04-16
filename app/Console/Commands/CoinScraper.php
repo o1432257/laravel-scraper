@@ -17,6 +17,7 @@ class CoinScraper extends Command
      * @var string
      */
     protected $signature = 'coin:scraper';
+    private $watchMoreUrl = 'https://crypto.cnyes.com/BTC/24h';
 
     private $results = array();
     private $coins = ['BTC', 'ETH', 'XRP', 'BNB', 'DOGE', 'TRX', 'ADA', 'TLM', 'CHZ', 'XLM'];
@@ -72,5 +73,10 @@ class CoinScraper extends Command
         foreach ($this->results as $key => $value) {
             $this->notice = $this->notice . $key . " : " . $value . " USD" . "\n";
         }
+
+        $this->notice = [
+            'message' => $this->notice,
+            'watchMoreUrl' => $this->watchMoreUrl
+        ];
     }
 }

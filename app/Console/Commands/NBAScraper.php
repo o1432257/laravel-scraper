@@ -12,8 +12,11 @@ use NotificationChannels\Telegram\TelegramChannel;
 
 class NBAScraper extends Command
 {
-    protected $url = 'https://tw.global.nba.com/stats2/scores/daily.json?countryCode=TW&locale=zh_TW&tz=%2B8&gameDate=';
-    protected $results = array();
+    private $demoUrl = 'https://tw.global.nba.com/stats2/scores/daily.json?countryCode=TW&locale=zh_TW&tz=%2B8&gameDate=';
+    private $url;
+    private $demoWatchMOreUrl = 'https://tw.global.nba.com/scores/#!/';
+    private $watchMoreUrl;
+    private $results = array();
     private $matchStatus = ['  未開始', '  比賽中', '  比賽結束'];
     private $notice;
     private $date;
@@ -58,12 +61,16 @@ class NBAScraper extends Command
             ->notify(new InvoicePaid($this->notice));
     }
 
-    public function setUrl()
+    private function setUrl()
     {
+        $this->url = $this->demoUrl;
+        $this->watchMoreUrl = $this->demoWatchMOreUrl;
+
         $this->url .= $this->date;
+        $this->watchMoreUrl .= $this->date;
     }
 
-    public function getNBA()
+    private function getNBA()
     {
         $client = new Client();
 
@@ -75,16 +82,20 @@ class NBAScraper extends Command
         }
     }
 
-    public function setNotice()
+    private function setNotice()
     {
         $this->notice = $this->date . "\n";
 
         foreach ($this->results as $key => $value) {
             $this->notice .= $value . "\n";
         }
+        $this->notice = [
+            'message' => $this->notice,
+            'watchMoreUrl' => $this->watchMoreUrl
+        ];
     }
 
-    public function setDate()
+    private function setDate()
     {
         if (date('Y-m-d', strtotime($this->argument('date'))) == $this->argument('date')) {
             $this->date = $this->argument('date');

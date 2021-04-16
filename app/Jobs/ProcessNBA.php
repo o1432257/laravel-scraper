@@ -32,6 +32,8 @@ class ProcessNBA implements ShouldQueue
      */
     public function handle()
     {
-        Artisan::call('NBA:scraper');
+        Artisan::call('NBA:scraper',[
+            'date' => $this->data
+        ]);
     }
 }

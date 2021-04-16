@@ -20,7 +20,7 @@ class InvoicePaid extends Notification
      *
      * @return void
      */
-    public function __construct( $data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
@@ -39,7 +39,7 @@ class InvoicePaid extends Notification
     public function toTelegram()
     {
         return TelegramMessage::create()->to('-575994593')
-            ->content( $this->data);
+            ->content( $this->data['message'])->button('觀看更多', $this->data['watchMoreUrl']);
     }
 
     /**
